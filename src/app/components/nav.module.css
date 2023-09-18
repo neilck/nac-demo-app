@@ -1,0 +1,26 @@
+.navlinks {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  justify-content: start;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.linkbutton {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font: inherit;
+  /*input has OS specific font-family*/
+  color: #069;
+  cursor: pointer;
+}
