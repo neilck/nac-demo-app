@@ -13,6 +13,7 @@ type NostrProviderProps = { children: React.ReactNode };
 
 const NostrContext = createContext<
   | {
+      ndk: NDK | null;
       ndkUser: NDKUser | null;
       loadNDKUser: () => Promise<NDKUser | undefined>;
       logout: () => void;
@@ -39,7 +40,7 @@ function NostrProvider({ children }: NostrProviderProps) {
     setNDKUser(null);
   };
 
-  const value = { ndkUser, loadNDKUser, logout };
+  const value = { ndk, ndkUser, loadNDKUser, logout };
   return (
     <NostrContext.Provider value={value}>{children}</NostrContext.Provider>
   );

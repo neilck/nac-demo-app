@@ -127,12 +127,16 @@ a {
   }
 }
 
+label {
+  padding-top: 0.5rem;
+}
+
 input[type="text"]
 {
     font-size:16px;
 }
 
-#button {
+button {
   padding:10px;
   border: 0px solid gray;
   color: white;
@@ -145,15 +149,47 @@ input[type="text"]
   font: inherit;
 }
 
-#button:focus {
+button:focus {
   outline: 2px solid gray;
   font-weight: bold;
   color: white;
 }
 
-#button:hover {
+button:hover {
   color: white;
   background-color: #a915ff;
   box-shadow: 3px 3px 5px grey;
   cursor: pointer;
+}
+
+pre {
+  white-space: pre-wrap;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.twoframe {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+}
+
+.whiteframe {
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+  background-color: white;
 }
