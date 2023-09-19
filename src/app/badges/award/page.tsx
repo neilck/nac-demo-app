@@ -3,37 +3,26 @@
 import { useState, useEffect } from "react";
 import { NDKEvent, NostrEvent } from "@nostr-dev-kit/ndk";
 import { useNostrContext } from "@/app/context/NostrContext";
-import { badgeDefinitionEvent } from "nostr-access-control";
+import { badgeAwardEvent } from "nostr-access-control";
 
-export default function AddBadge() {
+export default function AwardBadge() {
   const { ndk, ndkUser, publish } = useNostrContext();
   const [pubkey, setPubkey] = useState("<pubkey>");
-  const [d, setD] = useState("");
-  const [name, setName] = useState("My Badge");
-  const [description, setDescription] = useState(
-    "This is a sample badge created using nac-demo-app"
-  );
-  const [image, setImage] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/b/b8/50M%402x.png"
-  );
+  const [badgeDefRef, setBadgeDefRef] = useState("");
+  const [awardedPubkey, setAwardedPubkey] = useState("");
+
   const [pubEvent, setPubEvent] = useState<NostrEvent | undefined>(undefined);
 
-  const event = badgeDefinitionEvent({ pubkey, name, description, image, d });
+  const event = badgeAwardEvent({ pubkey, badgeDefRef, awardedPubkey });
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
     switch (e.currentTarget.id) {
-      case "d":
-        setD(value);
+      case "badgeDefRef":
+        setBadgeDefRef(value);
         break;
-      case "name":
-        setName(value);
-        break;
-      case "description":
-        setDescription(value);
-        break;
-      case "image":
-        setImage(image);
+      case "awardedPubkey":
+        setAwardedPubkey(value);
         break;
     }
   };
@@ -46,49 +35,32 @@ export default function AddBadge() {
   useEffect(() => {
     let key = "<pubkey>";
     if (ndkUser) key = ndkUser.hexpubkey;
-
     setPubkey(key);
-    setD(`30009:${key}:badgeId`);
+    setBadgeDefRef(`30009:${key}:badgeId`);
   }, [ndkUser]);
 
   return (
     <main>
-      <h1>Publish New Badge</h1>
+      <h1>Publish New Badge Award</h1>
       <div className="twoframe">
         <form className="form">
           Pubkey:
           <br />
           <div style={{ wordBreak: "break-all" }}>{pubkey}</div>
-          <label htmlFor="d">Parameterized replaceable descriptor</label>
+          <label htmlFor="badgeDefRef">Badge definition event reference</label>
           <input
             type="text"
-            id="d"
-            name="d"
-            defaultValue={d}
+            id="badgeDefRef"
+            name="badgeDefRef"
+            defaultValue={badgeDefRef}
             onChange={onChangeHandler}
           />
-          <label htmlFor="name">Badge name</label>
+          <label htmlFor="awardedPubkey">Pubkey of awardee</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            defaultValue={name}
-            onChange={onChangeHandler}
-          />
-          <label htmlFor="description">Description</label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            defaultValue={description}
-            onChange={onChangeHandler}
-          />
-          <label htmlFor="image">Image URL</label>
-          <input
-            type="text"
-            id="image"
-            name="image"
-            defaultValue={image}
+            id="awardedPubkey"
+            name="awardedPubkey"
+            defaultValue={awardedPubkey}
             onChange={onChangeHandler}
           />
           <br />

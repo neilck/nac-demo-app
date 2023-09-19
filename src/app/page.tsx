@@ -17,7 +17,12 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div id="centerbox" className={styles.centerbox}>
-        <button id="button" name="button" onClick={loginClicked}>
+        <button
+          id="button"
+          name="button"
+          className="loginButton"
+          onClick={loginClicked}
+        >
           Login with Nostr
         </button>
       </div>

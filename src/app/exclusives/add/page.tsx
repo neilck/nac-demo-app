@@ -3,22 +3,34 @@
 import { useState, useEffect } from "react";
 import { NDKEvent, NostrEvent } from "@nostr-dev-kit/ndk";
 import { useNostrContext } from "@/app/context/NostrContext";
-import { badgeDefinitionEvent } from "nostr-access-control";
+import { classifiedListingEvent } from "nostr-access-control";
 
-export default function AddBadge() {
+export default function AddExclusive() {
+  const getPubkey = (): string => {
+    return ndkUser ? ndkUser.hexpubkey : "<pubkey>";
+  };
+
   const { ndk, ndkUser, publish } = useNostrContext();
   const [pubkey, setPubkey] = useState("<pubkey>");
   const [d, setD] = useState("");
-  const [name, setName] = useState("My Badge");
-  const [description, setDescription] = useState(
-    "This is a sample badge created using nac-demo-app"
+  const [title, setTitle] = useState("My Exclusive");
+  const [summary, setSummary] = useState(
+    "This is a sample exclusive resource created using nac-demo-app"
   );
   const [image, setImage] = useState(
-    "https://upload.wikimedia.org/wikipedia/commons/b/b8/50M%402x.png"
+    "https://upload.wikimedia.org/wikipedia/commons/b/b0/WMF_safe.png"
   );
+  const [badgeDefRefs, setBadgeDefRefs] = useState([""]);
   const [pubEvent, setPubEvent] = useState<NostrEvent | undefined>(undefined);
 
-  const event = badgeDefinitionEvent({ pubkey, name, description, image, d });
+  const event = classifiedListingEvent({
+    pubkey,
+    d,
+    title,
+    summary,
+    image,
+    badgeDefRefs,
+  });
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
@@ -26,14 +38,33 @@ export default function AddBadge() {
       case "d":
         setD(value);
         break;
-      case "name":
-        setName(value);
+      case "title":
+        setTitle(value);
         break;
-      case "description":
-        setDescription(value);
+      case "summary":
+        setSummary(value);
         break;
       case "image":
         setImage(image);
+        break;
+      case "badgeDefRefs":
+        setBadgeDefRefs(badgeDefRefs);
+    }
+  };
+
+  const onChangeTextAreaHandler = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const value = e.currentTarget.value;
+    switch (e.currentTarget.id) {
+      case "badgeDefRefs":
+        const lines = value.split(/\r?\n|\r|\n/g);
+        const nonEmptyLines: string[] = [];
+        lines.forEach((line) => {
+          const trimmed = line.trim();
+          if (trimmed != "") nonEmptyLines.push(line);
+        });
+        setBadgeDefRefs(nonEmptyLines);
         break;
     }
   };
@@ -46,14 +77,16 @@ export default function AddBadge() {
   useEffect(() => {
     let key = "<pubkey>";
     if (ndkUser) key = ndkUser.hexpubkey;
-
-    setPubkey(key);
-    setD(`30009:${key}:badgeId`);
+    {
+      setPubkey(key);
+      setD(`30402:${key}:exclusiveId`);
+      setBadgeDefRefs([`30009:${key}:badgeId`]);
+    }
   }, [ndkUser]);
 
   return (
     <main>
-      <h1>Publish New Badge</h1>
+      <h1>Publish New Exclusive</h1>
       <div className="twoframe">
         <form className="form">
           Pubkey:
@@ -67,20 +100,20 @@ export default function AddBadge() {
             defaultValue={d}
             onChange={onChangeHandler}
           />
-          <label htmlFor="name">Badge name</label>
+          <label htmlFor="title">Exclusive title</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            defaultValue={name}
+            id="title"
+            name="title"
+            defaultValue={title}
             onChange={onChangeHandler}
           />
-          <label htmlFor="description">Description</label>
+          <label htmlFor="summary">Summary</label>
           <input
             type="text"
-            id="description"
-            name="description"
-            defaultValue={description}
+            id="summary"
+            name="summary"
+            defaultValue={summary}
             onChange={onChangeHandler}
           />
           <label htmlFor="image">Image URL</label>
@@ -90,6 +123,14 @@ export default function AddBadge() {
             name="image"
             defaultValue={image}
             onChange={onChangeHandler}
+          />
+          <label htmlFor="badgeDefRefs">Required Badges (one per line)</label>
+          <textarea
+            id="badgeDefRefs"
+            name="badgeDefRefs"
+            rows={5}
+            defaultValue={badgeDefRefs}
+            onChange={onChangeTextAreaHandler}
           />
           <br />
           <button

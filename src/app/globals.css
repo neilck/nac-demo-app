@@ -139,17 +139,9 @@ input[type="text"]
     font-size:16px;
 }
 
-button {
-  padding:10px;
-  border: 0px solid gray;
-  color: white;
-  background-color:#8e30eb;
-  border-radius: 5px;
-  display: block;
-  margin-left: auto;
-  padding: 10px;
-  margin-right: auto;
-  font: inherit;
+textarea
+{
+  font-size:16px;
 }
 
 button:focus {
@@ -173,19 +165,53 @@ pre {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
+.loginButton {
+  border: 0px solid gray;
+  color: white;
+  background-color:#8e30eb;
+  border-radius: 5px;
+  display: block;
+  margin-left: auto;
+  padding: 10px;
+  margin-right: auto;
+  font: inherit;
+}
+
+.actionButton {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 0px solid gray;
+  color: white;
+  background-color:#8e30eb;
+  border-radius: 5px;
+  font: inherit;
+}
+
 .twoframe {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
   width: 100%;
+}
+
+.frame {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  position: relative;
+  gap: 1rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  position: relative;
+  justify-content: start;
+  align-items: relative;
   width: 100%;
   padding: 2rem;
 }

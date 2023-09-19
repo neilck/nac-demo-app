@@ -19,8 +19,10 @@ export default function Nav() {
         <div className={styles.navbar}>
           <div className={styles.navlinks}>
             <Link href="/badges/add">Publish Badge</Link>
-            <Link href="/exclusive">Publish Exclusive</Link>
-            <Link href="/exclusive">Redeem Exclusive</Link>
+            <Link href="/badges/award">Award Badge</Link>
+            <Link href="/exclusives/add">Publish Exclusive</Link>
+            <Link href="/exclusives">Redeem Exclusive</Link>
+            <Link href="/events">Events</Link>
           </div>
           <button className={styles.linkbutton} onClick={logoutClicked}>
             logout
