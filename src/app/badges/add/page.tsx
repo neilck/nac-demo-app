@@ -6,13 +6,12 @@ import { useNostrContext } from "@/app/context/NostrContext";
 import { badgeDefinitionEvent } from "nostr-access-control";
 
 export default function AddBadge() {
-  const initializePubkey = (): string => {
+  const getPubkey = (): string => {
     return ndkUser ? ndkUser.hexpubkey : "<pubkey>";
   };
 
-  const { ndk, ndkUser } = useNostrContext();
-
-  const [pubkey, setPubkey] = useState(initializePubkey());
+  const { ndk, ndkUser, publish } = useNostrContext();
+  const [pubkey, setPubkey] = useState("<pubkey>");
   const [d, setD] = useState(`30009:${pubkey}:badgeId`);
   const [name, setName] = useState("My Badge");
   const [description, setDescription] = useState(
@@ -21,6 +20,7 @@ export default function AddBadge() {
   const [image, setImage] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/b/b8/50M%402x.png"
   );
+  const [pubEvent, setPubEvent] = useState<NostrEvent | undefined>(undefined);
 
   const event = badgeDefinitionEvent({ d, name, description, image, pubkey });
 
@@ -42,14 +42,16 @@ export default function AddBadge() {
     }
   };
 
-  const publish = async () => {
-    if (ndk) {
-      const ndkEvent = new NDKEvent(ndk, event);
-      const result = await ndkEvent.publish();
-      const test = await ndkEvent.toNostrEvent();
-      console.log("result: " + JSON.stringify(test));
-    }
+  const publishHandler = async () => {
+    const signedEvent = await publish(event);
+    setPubEvent(signedEvent);
   };
+
+  useEffect(() => {
+    let key = "<pubkey>";
+    if (ndkUser) key = ndkUser.hexpubkey;
+    setPubkey(key);
+  }, [ndkUser]);
 
   return (
     <main>
@@ -92,14 +94,24 @@ export default function AddBadge() {
             onChange={onChangeHandler}
           />
           <br />
-          <button type="button" onClick={publish}>
+          <button type="button" onClick={publishHandler}>
             Publish
           </button>
         </form>
 
         <div className="whiteframe">
+          Unsigned Event
           <pre style={{ wordBreak: "break-all" }}>
             {JSON.stringify(event, null, 2)}
+          </pre>
+        </div>
+      </div>
+      <div className="twoframe" style={{ paddingTop: "0.5rem" }}>
+        <div style={{ width: "100%", padding: "2rem" }}> x</div>
+        <div className="whiteframe">
+          Published Event
+          <pre style={{ wordBreak: "break-all" }}>
+            {JSON.stringify(pubEvent, null, 2)}
           </pre>
         </div>
       </div>

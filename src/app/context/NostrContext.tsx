@@ -1,5 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import NDK, { NDKUser, NDKNip07Signer } from "@nostr-dev-kit/ndk";
+import NDK, {
+  NDKUser,
+  NDKNip07Signer,
+  NostrEvent,
+  NDKEvent,
+} from "@nostr-dev-kit/ndk";
 
 const nip07signer = new NDKNip07Signer();
 const ndk = new NDK({
@@ -16,6 +21,7 @@ const NostrContext = createContext<
       ndk: NDK | null;
       ndkUser: NDKUser | null;
       loadNDKUser: () => Promise<NDKUser | undefined>;
+      publish: (event: NostrEvent) => Promise<NostrEvent | undefined>;
       logout: () => void;
     }
   | undefined
@@ -26,21 +32,38 @@ function NostrProvider({ children }: NostrProviderProps) {
 
   useEffect(() => {
     ndk.connect();
+    const nip07signer = new NDKNip07Signer();
+    const hexpubkey = localStorage.getItem("pubkey");
+    if (hexpubkey) {
+      console.log("Found pubkey in local storage: " + hexpubkey);
+      const loadedUser = new NDKUser({ hexpubkey: hexpubkey });
+      console.log("User created: " + loadedUser.hexpubkey);
+      setNDKUser(loadedUser);
+    }
   }, []);
 
   const loadNDKUser = async (): Promise<NDKUser | undefined> => {
     const user = await ndk.signer?.user();
     if (user) {
       setNDKUser(user);
+      localStorage.setItem("pubkey", user.hexpubkey);
       return;
     }
   };
 
-  const logout = () => {
-    setNDKUser(null);
+  const publish = async (event: NostrEvent) => {
+    const ndkEvent = new NDKEvent(ndk, event);
+    const result = await ndkEvent.publish();
+    const signedEvent = await ndkEvent.toNostrEvent();
+    return signedEvent;
   };
 
-  const value = { ndk, ndkUser, loadNDKUser, logout };
+  const logout = () => {
+    setNDKUser(null);
+    localStorage.removeItem("pubkey");
+  };
+
+  const value = { ndk, ndkUser, loadNDKUser, publish, logout };
   return (
     <NostrContext.Provider value={value}>{children}</NostrContext.Provider>
   );
