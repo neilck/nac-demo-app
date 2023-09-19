@@ -79,8 +79,8 @@ export default function AddExclusive() {
     if (ndkUser) key = ndkUser.hexpubkey;
     {
       setPubkey(key);
-      setD(`30402:${key}:exclusiveId`);
-      setBadgeDefRefs([`30009:${key}:badgeId`]);
+      setD(`nacdemoapp-myexclusive`);
+      setBadgeDefRefs([`30009:${key}:nacdemoapp-mybadge`]);
     }
   }, [ndkUser]);
 
@@ -150,7 +150,7 @@ export default function AddExclusive() {
         </div>
       </div>
       <div className="twoframe" style={{ paddingTop: "0.5rem" }}>
-        <div style={{ width: "100%", padding: "2rem" }}> x</div>
+        <div style={{ width: "100%", padding: "2rem" }}> </div>
         <div className="whiteframe">
           Published Event
           <pre style={{ wordBreak: "break-all" }}>

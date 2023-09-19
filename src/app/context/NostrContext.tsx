@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import NDK, {
+  NDKKind,
   NDKUser,
   NDKNip07Signer,
   NostrEvent,
   NDKEvent,
+  NDKFilter,
 } from "@nostr-dev-kit/ndk";
 
 const nip07signer = new NDKNip07Signer();
@@ -22,6 +24,7 @@ const NostrContext = createContext<
       ndkUser: NDKUser | null;
       loadNDKUser: () => Promise<NDKUser | undefined>;
       publish: (event: NostrEvent) => Promise<NostrEvent | undefined>;
+      deleteEvent: (id: string) => void;
       logout: () => void;
     }
   | undefined
@@ -63,7 +66,23 @@ function NostrProvider({ children }: NostrProviderProps) {
     localStorage.removeItem("pubkey");
   };
 
-  const value = { ndk, ndkUser, loadNDKUser, publish, logout };
+  const deleteEvent = async (id: string) => {
+    ndk.assertSigner();
+
+    ndk.assertSigner();
+
+    const event = new NDKEvent(ndk, {
+      kind: NDKKind.EventDeletion,
+      content: "",
+      tags: [["e", id]],
+    } as NostrEvent);
+
+    const relays = await event
+      .publish()
+      .catch((error) => console.log("delete error: " + JSON.stringify(error)));
+  };
+
+  const value = { ndk, ndkUser, loadNDKUser, publish, logout, deleteEvent };
   return (
     <NostrContext.Provider value={value}>{children}</NostrContext.Provider>
   );

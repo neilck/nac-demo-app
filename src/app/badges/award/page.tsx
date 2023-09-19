@@ -36,7 +36,7 @@ export default function AwardBadge() {
     let key = "<pubkey>";
     if (ndkUser) key = ndkUser.hexpubkey;
     setPubkey(key);
-    setBadgeDefRef(`30009:${key}:badgeId`);
+    setBadgeDefRef(`30009:${key}:nacdemoapp-mybadge`);
   }, [ndkUser]);
 
   return (
@@ -81,7 +81,7 @@ export default function AwardBadge() {
         </div>
       </div>
       <div className="twoframe" style={{ paddingTop: "0.5rem" }}>
-        <div style={{ width: "100%", padding: "2rem" }}> x</div>
+        <div style={{ width: "100%", padding: "2rem" }}> </div>
         <div className="whiteframe">
           Published Event
           <pre style={{ wordBreak: "break-all" }}>

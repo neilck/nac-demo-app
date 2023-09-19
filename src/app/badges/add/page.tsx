@@ -8,7 +8,7 @@ import { badgeDefinitionEvent } from "nostr-access-control";
 export default function AddBadge() {
   const { ndk, ndkUser, publish } = useNostrContext();
   const [pubkey, setPubkey] = useState("<pubkey>");
-  const [d, setD] = useState("");
+  const [d, setD] = useState("nacdemoapp-mybadge");
   const [name, setName] = useState("My Badge");
   const [description, setDescription] = useState(
     "This is a sample badge created using nac-demo-app"
@@ -48,7 +48,6 @@ export default function AddBadge() {
     if (ndkUser) key = ndkUser.hexpubkey;
 
     setPubkey(key);
-    setD(`30009:${key}:badgeId`);
   }, [ndkUser]);
 
   return (
@@ -109,7 +108,7 @@ export default function AddBadge() {
         </div>
       </div>
       <div className="twoframe" style={{ paddingTop: "0.5rem" }}>
-        <div style={{ width: "100%", padding: "2rem" }}> x</div>
+        <div style={{ width: "100%", padding: "2rem" }}> </div>
         <div className="whiteframe">
           Published Event
           <pre style={{ wordBreak: "break-all" }}>
