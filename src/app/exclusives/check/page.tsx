@@ -24,7 +24,16 @@ export default function CheckEligibility() {
   const [runOn, setRunOn] = useState("client");
   const [resullDisplay, setResultDisplay] = useState(-1);
 
-  // non-state lists to avoid overriding due to multiple adds before render
+  useEffect(() => {
+    let key = "<pubkey>";
+    if (ndkUser) key = ndkUser.hexpubkey;
+    {
+      setOwner(key);
+      setPubkey(key);
+    }
+  }, [ndkUser]);
+
+  // <---------- on-screen logging ---------->
   let myMesgs = [...mesgs];
   let myEvents = new Set(events);
 
@@ -41,6 +50,47 @@ export default function CheckEligibility() {
     setEvents(myEvents);
   };
 
+  const processEligibilityResult = (result: EligibilityResult) => {
+    if (result.isEligible) setResultDisplay(1);
+    else setResultDisplay(0);
+    addMesg("---------- Result ----------");
+    addMesg(`isEligible: ${result.isEligible}`);
+    if (result.errors) {
+      addMesg("Errors");
+      result.errors.forEach((error) => addMesg(error));
+    }
+
+    if (result.badges) {
+      addMesg("badges:");
+      result.badges.forEach((badge) => {
+        addMesg(`${badge.d} isValid: ${badge.isValid}`);
+        if (badge.errors) addMesg(`  errors: ${badge.errors?.toString()}`);
+      });
+    }
+  };
+
+  // <---------- event handlers ---------->
+  const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRunOn(e.currentTarget.value);
+  };
+
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value;
+    switch (e.currentTarget.id) {
+      case "pubkey":
+        setPubkey(value);
+        break;
+      case "exclusive":
+        setExclusive(value);
+        break;
+      case "owner":
+        setOwner(value);
+    }
+  };
+
+  /**
+   * Run eligibilty check server side
+   */
   const checkOnServer = async () => {
     const jsonBody = JSON.stringify({
       owner: owner,
@@ -63,51 +113,15 @@ export default function CheckEligibility() {
     }
   };
 
-  const processEligibilityResult = (result: EligibilityResult) => {
-    if (result.isEligible) setResultDisplay(1);
-    else setResultDisplay(0);
-    addMesg("---------- Result ----------");
-    addMesg(`isEligible: ${result.isEligible}`);
-    if (result.errors) {
-      addMesg("Errors");
-      result.errors.forEach((error) => addMesg(error));
-    }
-
-    let firstError = true;
-    if (result.badges) {
-      result.badges.forEach((badge) => {
-        if (badge.errors) {
-          if (firstError) {
-            addMesg("badge errors:");
-          }
-          firstError = false;
-          addMesg(`${badge.errors.toString()}: ${badge.d}`);
-        }
-      });
-    }
-  };
-
-  const onRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRunOn(e.currentTarget.value);
-  };
-
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.currentTarget.value;
-    switch (e.currentTarget.id) {
-      case "pubkey":
-        setPubkey(value);
-        break;
-      case "exclusive":
-        setExclusive(value);
-        break;
-      case "owner":
-        setOwner(value);
-    }
-  };
-
+  /**
+   * Run eligibilty check client side
+   */
   const checkClicked = async () => {
     myMesgs = [];
     myEvents = new Set<NDKEvent>();
+    setMesgs(myMesgs);
+    setEvents(myEvents);
+
     setResultDisplay(-1);
     if (runOn == "client") addMesg("starting eligibility check on client");
     else {
@@ -193,15 +207,7 @@ export default function CheckEligibility() {
     }
   };
 
-  useEffect(() => {
-    let key = "<pubkey>";
-    if (ndkUser) key = ndkUser.hexpubkey;
-    {
-      setOwner(key);
-      setPubkey(key);
-    }
-  }, [ndkUser]);
-
+  // <---------- render ---------->
   return (
     <main>
       <h1>Check Exclusive Eligibility</h1>
