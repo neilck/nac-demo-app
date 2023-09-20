@@ -5,8 +5,11 @@ import { use } from "react";
 
 export const CollapsibleEvents = (props: {
   events: Set<NDKEvent> | undefined;
+  enableDelete?: boolean;
 }) => {
   const { deleteEvent } = useNostrContext();
+  const enableDelete = props.enableDelete;
+
   if (!props.events) return <>no events</>;
   else {
     const eventArray: NostrEvent[] = [];
@@ -22,7 +25,7 @@ export const CollapsibleEvents = (props: {
     const formatTrigger = (event: NostrEvent) => {
       const id = event.id ? event.id.slice(0, 10) + "..." : "<no id>";
       let name = "";
-      if (event.kind) {
+      if (event.kind != undefined) {
         switch (event.kind) {
           case 30009:
             name = "badge definition";
@@ -47,6 +50,12 @@ export const CollapsibleEvents = (props: {
     return (
       <>
         <i>Click rows to expand...</i>
+        {enableDelete && (
+          <>
+            <br />
+            <i>Re-fetch to see delete result...</i>
+          </>
+        )}
         <br /> <br />
         {eventArray.map((event) => (
           <Collapsible key={event.id} trigger={formatTrigger(event)}>
@@ -55,16 +64,19 @@ export const CollapsibleEvents = (props: {
               style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
             >
               <pre>{JSON.stringify(event, null, 2)}</pre>
-              <div style={{ display: "flex", justifyContent: "end" }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (event.id) deleteEvent(event.id);
-                  }}
-                >
-                  delete
-                </button>
-              </div>
+              {enableDelete && (
+                <div style={{ display: "flex", justifyContent: "end" }}>
+                  <button
+                    className="deleteButton"
+                    type="button"
+                    onClick={() => {
+                      if (event.id) deleteEvent(event.id);
+                    }}
+                  >
+                    delete
+                  </button>
+                </div>
+              )}
             </div>
           </Collapsible>
         ))}

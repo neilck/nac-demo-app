@@ -144,6 +144,11 @@ textarea
   font-size:16px;
 }
 
+li
+{
+  margin-bottom: 4px;
+}
+
 button:focus {
   outline: 2px solid gray;
   font-weight: bold;
@@ -163,6 +168,7 @@ pre {
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  word-break: break-all;
 }
 
 .loginButton {
@@ -175,18 +181,24 @@ pre {
   padding: 10px;
   margin-right: auto;
   font: inherit;
+  min-width: 100px;
 }
 
-.actionButton {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 10px;
-  padding-right: 10px;
+.deleteButton {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
   border: 0px solid gray;
   color: white;
-  background-color:#8e30eb;
-  border-radius: 5px;
-  font: inherit;
+  background-color: red;
+}
+
+.deleteButton:hover {
+  color: white;
+  background-color: #8b0000;
+  box-shadow: 3px 3px 5px grey;
+  cursor: pointer;
 }
 
 .twoframe {
@@ -195,16 +207,8 @@ pre {
   justify-content: center;
   align-items: flex-start;
   position: relative;
+  padding-top: 0.5rem;
   width: 100%;
-}
-
-.frame {
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  position: relative;
-  gap: 1rem;
 }
 
 .form {
@@ -212,6 +216,13 @@ pre {
   flex-direction: column;
   justify-content: start;
   align-items: relative;
+  width: 100%;
+  max-width: 640px;
+  padding: 2rem;
+}
+
+.frame {
+  position: relative;
   width: 100%;
   padding: 2rem;
 }

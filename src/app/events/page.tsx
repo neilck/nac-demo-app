@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import { useNostrContext } from "@/app/context/NostrContext";
 import { NDKEvent, NostrEvent, NDKFilter } from "@nostr-dev-kit/ndk";
-import { CollapsibleEvents } from "./CollapsibleEvents";
+import { CollapsibleEvents } from "../components/CollapsibleEvents";
 
 export default function Events() {
   const { ndk, ndkUser, publish } = useNostrContext();
   const [pubkey, setPubkey] = useState("");
+  const [kinds, setKinds] = useState([30009, 8, 30402]);
   const [events, setEvents] = useState<Set<NDKEvent> | undefined>(undefined);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,13 +17,19 @@ export default function Events() {
       case "pubkey":
         setPubkey(value);
         break;
+      case "kinds":
+        const numArray = value
+          .split(",")
+          .filter((x) => x.trim().length && !isNaN(Number(x)))
+          .map(Number);
+        setKinds(numArray);
+        break;
     }
   };
 
   const subscribeClicked = async () => {
-    const filter: NDKFilter = { kinds: [30009, 8, 30402] };
+    const filter: NDKFilter = { kinds: kinds };
     setEvents(undefined);
-    // const filter: NDKFilter = { kinds: [30402] };
     if (pubkey != "") {
       filter.authors = [pubkey];
     }
@@ -56,26 +63,37 @@ export default function Events() {
   return (
     <main>
       <h1>Events</h1>
-      <div className="frame" style={{ alignItems: "end" }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+      <div className="twoframe">
+        <form className="form">
           <label htmlFor="pubkey">Author pubkey</label>
           <input
             type="text"
             id="pubkey"
             name="pubkey"
-            key={pubkey}
             defaultValue={pubkey}
             onChange={onChangeHandler}
-            size={70}
           />
+          <label htmlFor="kinds">Kinds</label>
+          <input
+            type="text"
+            id="kinds"
+            name="kinds"
+            defaultValue={kinds.toString()}
+            onChange={onChangeHandler}
+          />
+          <br />
+          <button
+            type="button"
+            className="loginButton"
+            onClick={subscribeClicked}
+          >
+            Fetch
+          </button>
+        </form>
+
+        <div className="frame">
+          <CollapsibleEvents events={events} enableDelete={true} />
         </div>
-        <button className="actionButton" onClick={subscribeClicked}>
-          Fetch
-        </button>
-        <br />
-      </div>
-      <div style={{ width: "800px", paddingLeft: "4rem", paddingTop: "1rem" }}>
-        <CollapsibleEvents events={events} />
       </div>
     </main>
   );

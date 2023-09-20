@@ -21,8 +21,8 @@ export default function Nav() {
             <Link href="/badges/add">Publish Badge</Link>
             <Link href="/badges/award">Award Badge</Link>
             <Link href="/exclusives/add">Publish Exclusive</Link>
-            <Link href="/exclusives">Redeem Exclusive</Link>
-            <Link href="/events">Events</Link>
+            <Link href="/exclusives/check">Check Eligibility</Link>
+            <Link href="/events">Fetch Events</Link>
           </div>
           <button className={styles.linkbutton} onClick={logoutClicked}>
             logout

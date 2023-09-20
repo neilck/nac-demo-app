@@ -55,10 +55,10 @@ export default function AddBadge() {
       <h1>Publish New Badge</h1>
       <div className="twoframe">
         <form className="form">
-          Pubkey:
+          Author pubkey:
           <br />
           <div style={{ wordBreak: "break-all" }}>{pubkey}</div>
-          <label htmlFor="d">Parameterized replaceable descriptor</label>
+          <label htmlFor="d">Badge ID</label>
           <input
             type="text"
             id="d"
@@ -102,18 +102,14 @@ export default function AddBadge() {
 
         <div className="whiteframe">
           Unsigned Event
-          <pre style={{ wordBreak: "break-all" }}>
-            {JSON.stringify(event, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(event, null, 2)}</pre>
         </div>
       </div>
-      <div className="twoframe" style={{ paddingTop: "0.5rem" }}>
+      <div className="twoframe">
         <div style={{ width: "100%", padding: "2rem" }}> </div>
         <div className="whiteframe">
           Published Event
-          <pre style={{ wordBreak: "break-all" }}>
-            {JSON.stringify(pubEvent, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(pubEvent, null, 2)}</pre>
         </div>
       </div>
     </main>

@@ -8,6 +8,7 @@ import { badgeAwardEvent } from "nostr-access-control";
 export default function AwardBadge() {
   const { ndk, ndkUser, publish } = useNostrContext();
   const [pubkey, setPubkey] = useState("<pubkey>");
+  const [badgeID, setBadgeID] = useState("nacdemoapp-mybadge");
   const [badgeDefRef, setBadgeDefRef] = useState("");
   const [awardedPubkey, setAwardedPubkey] = useState("");
 
@@ -18,8 +19,10 @@ export default function AwardBadge() {
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
     switch (e.currentTarget.id) {
-      case "badgeDefRef":
-        setBadgeDefRef(value);
+      case "badgeID":
+        setBadgeID(value);
+        const ref = `30009:${pubkey}:${badgeID}`;
+        setBadgeDefRef(ref);
         break;
       case "awardedPubkey":
         setAwardedPubkey(value);
@@ -36,7 +39,7 @@ export default function AwardBadge() {
     let key = "<pubkey>";
     if (ndkUser) key = ndkUser.hexpubkey;
     setPubkey(key);
-    setBadgeDefRef(`30009:${key}:nacdemoapp-mybadge`);
+    setBadgeDefRef(`30009:${key}:${badgeID}`);
   }, [ndkUser]);
 
   return (
@@ -44,18 +47,18 @@ export default function AwardBadge() {
       <h1>Publish New Badge Award</h1>
       <div className="twoframe">
         <form className="form">
-          Pubkey:
+          Author pubkey:
           <br />
           <div style={{ wordBreak: "break-all" }}>{pubkey}</div>
-          <label htmlFor="badgeDefRef">Badge definition event reference</label>
+          <label htmlFor="badgeID">Badge ID</label>
           <input
             type="text"
-            id="badgeDefRef"
-            name="badgeDefRef"
-            defaultValue={badgeDefRef}
+            id="badgeID"
+            name="badgeID"
+            defaultValue={badgeID}
             onChange={onChangeHandler}
           />
-          <label htmlFor="awardedPubkey">Pubkey of awardee</label>
+          <label htmlFor="awardedPubkey">Awardee pubkey</label>
           <input
             type="text"
             id="awardedPubkey"
@@ -75,18 +78,14 @@ export default function AwardBadge() {
 
         <div className="whiteframe">
           Unsigned Event
-          <pre style={{ wordBreak: "break-all" }}>
-            {JSON.stringify(event, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(event, null, 2)}</pre>
         </div>
       </div>
-      <div className="twoframe" style={{ paddingTop: "0.5rem" }}>
+      <div className="twoframe">
         <div style={{ width: "100%", padding: "2rem" }}> </div>
         <div className="whiteframe">
           Published Event
-          <pre style={{ wordBreak: "break-all" }}>
-            {JSON.stringify(pubEvent, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(pubEvent, null, 2)}</pre>
         </div>
       </div>
     </main>
