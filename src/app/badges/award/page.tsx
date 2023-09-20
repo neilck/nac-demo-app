@@ -21,7 +21,7 @@ export default function AwardBadge() {
     switch (e.currentTarget.id) {
       case "badgeID":
         setBadgeID(value);
-        const ref = `30009:${pubkey}:${badgeID}`;
+        const ref = `30009:${pubkey}:${value}`;
         setBadgeDefRef(ref);
         break;
       case "awardedPubkey":
