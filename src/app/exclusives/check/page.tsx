@@ -214,7 +214,7 @@ export default function CheckEligibility() {
       <div className="twoframe">
         <div style={{ width: "100%" }}>
           <form className="form">
-            <label htmlFor="owner">Exclusive Owner Pubkey</label>
+            <label htmlFor="owner">Resource Owner pubkey</label>
             <input
               type="text"
               id="owner"
@@ -240,7 +240,7 @@ export default function CheckEligibility() {
             />
 
             <br />
-            <div style={{ display: "flex", justifyContent: "start" }}>
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <button
                 type="button"
                 className="loginButton"

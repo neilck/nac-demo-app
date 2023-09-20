@@ -89,7 +89,7 @@ export default function AddExclusive() {
       <h1>Publish New Exclusive</h1>
       <div className="twoframe">
         <form className="form">
-          Author pubkey:
+          Resource Owner pubkey:
           <br />
           <div style={{ wordBreak: "break-all" }}>{pubkey}</div>
           <label htmlFor="d">Exclusive ID</label>
@@ -124,7 +124,9 @@ export default function AddExclusive() {
             defaultValue={image}
             onChange={onChangeHandler}
           />
-          <label htmlFor="badgeDefRefs">Required Badges (one per line)</label>
+          <label htmlFor="badgeDefRefs">
+            Required Badge IDs (one per line)
+          </label>
           <textarea
             id="badgeDefRefs"
             name="badgeDefRefs"
@@ -143,6 +145,14 @@ export default function AddExclusive() {
         </form>
 
         <div className="whiteframe">
+          <pre style={{ paddingBottom: "4px" }}>
+            <a
+              href="https://github.com/nostr-protocol/nips/blob/master/99.md"
+              target="_blank"
+            >
+              NIP-99 Classifed Listings
+            </a>
+          </pre>
           Unsigned Event
           <pre>{JSON.stringify(event, null, 2)}</pre>
         </div>

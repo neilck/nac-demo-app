@@ -53,7 +53,7 @@ export const CollapsibleEvents = (props: {
         {enableDelete && (
           <>
             <br />
-            <i>Re-fetch to see delete result...</i>
+            <i>Re-Fetch to verify delete result...</i>
           </>
         )}
         <br /> <br />
@@ -67,10 +67,14 @@ export const CollapsibleEvents = (props: {
               {enableDelete && (
                 <div style={{ display: "flex", justifyContent: "end" }}>
                   <button
+                    id={event.id}
                     className="deleteButton"
                     type="button"
-                    onClick={() => {
-                      if (event.id) deleteEvent(event.id);
+                    onClick={(e) => {
+                      if (event.id) {
+                        deleteEvent(event.id);
+                        e.currentTarget.disabled = true;
+                      }
                     }}
                   >
                     delete

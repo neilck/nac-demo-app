@@ -48,7 +48,7 @@ export default function AwardBadge() {
       <h1>Publish New Badge Award</h1>
       <div className="twoframe">
         <form className="form">
-          Author pubkey:
+          Badge Issuer pubkey:
           <br />
           <div style={{ wordBreak: "break-all" }}>{pubkey}</div>
           <label htmlFor="badgeID">Badge ID</label>
@@ -59,7 +59,7 @@ export default function AwardBadge() {
             defaultValue={badgeID}
             onChange={onChangeHandler}
           />
-          <label htmlFor="awardedPubkey">Awardee pubkey</label>
+          <label htmlFor="awardedPubkey">User pubkey (to award)</label>
           <input
             type="text"
             id="awardedPubkey"
@@ -78,6 +78,14 @@ export default function AwardBadge() {
         </form>
 
         <div className="whiteframe">
+          <pre style={{ paddingBottom: "4px" }}>
+            <a
+              href="https://github.com/nostr-protocol/nips/blob/master/58.md"
+              target="_blank"
+            >
+              NIP-58 Badges
+            </a>
+          </pre>
           Unsigned Event
           <pre>{JSON.stringify(event, null, 2)}</pre>
         </div>

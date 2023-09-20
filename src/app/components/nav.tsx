@@ -18,6 +18,7 @@ export default function Nav() {
       {isLoggedIn && (
         <div className={styles.navbar}>
           <div className={styles.navlinks}>
+            <Link href="/">Home</Link>
             <Link href="/badges/add">Publish Badge</Link>
             <Link href="/badges/award">Award Badge</Link>
             <Link href="/exclusives/add">Publish Exclusive</Link>

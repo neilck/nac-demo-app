@@ -55,7 +55,7 @@ export default function AddBadge() {
       <h1>Publish New Badge</h1>
       <div className="twoframe">
         <form className="form">
-          Author pubkey:
+          Badge Issuer pubkey:
           <br />
           <div style={{ wordBreak: "break-all" }}>{pubkey}</div>
           <label htmlFor="d">Badge ID</label>
@@ -101,6 +101,14 @@ export default function AddBadge() {
         </form>
 
         <div className="whiteframe">
+          <pre style={{ paddingBottom: "4px" }}>
+            <a
+              href="https://github.com/nostr-protocol/nips/blob/master/58.md"
+              target="_blank"
+            >
+              NIP-58 Badges
+            </a>
+          </pre>
           Unsigned Event
           <pre>{JSON.stringify(event, null, 2)}</pre>
         </div>
