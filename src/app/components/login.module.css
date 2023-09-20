@@ -1,0 +1,10 @@
+.centerbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    row-gap: 0.2rem;
+  }

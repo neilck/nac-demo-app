@@ -1,17 +1,9 @@
 
-.centerbox {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  width: 100%;
-  min-height: 600px;
-  padding: 4rem 0;
-}
+
 
 .center {
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   position: relative;
   padding: 4rem 0;

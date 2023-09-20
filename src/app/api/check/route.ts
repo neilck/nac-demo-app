@@ -17,7 +17,7 @@ import {
 import getErrorMessage from "@/app/errors";
 
 export async function POST(request: Request) {
-  console.log("post called");
+  console.log("api/check called");
   let exclusiveid = "";
   let pubkey = "";
   let owner = "";
@@ -64,7 +64,6 @@ export async function POST(request: Request) {
       "#d": [exclusiveid],
     };
 
-    console.log(filter);
     const exclusiveEvent = await ndk.fetchEvent(filter);
 
     if (!exclusiveEvent) {

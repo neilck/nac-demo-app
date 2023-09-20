@@ -162,6 +162,16 @@ button:hover {
   cursor: pointer;
 }
 
+button:disabled{
+  outline: 2px solid gray;
+  font-weight: bold;
+  color: white;
+  background-color: darkgrey;
+  pointer-events: none;
+
+}
+
+
 pre {
   white-space: pre-wrap;       /* Since CSS 2.1 */
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */

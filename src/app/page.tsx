@@ -1,31 +1,25 @@
 "use client";
 
-import Image from "next/image";
 import styles from "./page.module.css";
-import Link from "next/link";
-import Nav from "./components/Nav";
+import Login from "./components/Login";
 import { useNostrContext } from "./context/NostrContext";
 
-export default function Home() {
-  const { ndkUser, loadNDKUser } = useNostrContext();
-  const isLoggedIn = ndkUser != null;
+const welcome = () => {
+  return (
+    <>
+      <h2>Nostr Access Control Demo App</h2>
+    </>
+  );
+};
 
-  const loginClicked = () => {
-    loadNDKUser();
-  };
+export default function Home() {
+  const { ndk, ndkUser, loadNDKUser, nip07Ready } = useNostrContext();
+  const isLoggedIn = ndkUser != null;
 
   return (
     <main className={styles.main}>
-      <div id="centerbox" className={styles.centerbox}>
-        <button
-          id="button"
-          name="button"
-          className="loginButton"
-          onClick={loginClicked}
-        >
-          Login with Nostr
-        </button>
-      </div>
+      {!isLoggedIn && <Login />}
+      {isLoggedIn && welcome()}
     </main>
   );
 }

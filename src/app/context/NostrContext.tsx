@@ -8,9 +8,7 @@ import NDK, {
   NDKFilter,
 } from "@nostr-dev-kit/ndk";
 
-const nip07signer = new NDKNip07Signer();
 const ndk = new NDK({
-  signer: nip07signer,
   explicitRelayUrls: ["wss://relay.damus.io"],
   outboxRelayUrls: ["wss://purplepag.es"],
   enableOutboxModel: true,
@@ -22,6 +20,7 @@ const NostrContext = createContext<
   | {
       ndk: NDK | null;
       ndkUser: NDKUser | null;
+      nip07Ready: boolean;
       loadNDKUser: () => Promise<NDKUser | undefined>;
       publish: (event: NostrEvent) => Promise<NostrEvent | undefined>;
       deleteEvent: (id: string) => void;
@@ -32,15 +31,26 @@ const NostrContext = createContext<
 
 function NostrProvider({ children }: NostrProviderProps) {
   const [ndkUser, setNDKUser] = useState<NDKUser | null>(null);
+  const [nip07Ready, setNip07Ready] = useState(false);
 
   useEffect(() => {
     ndk.connect();
-    const nip07signer = new NDKNip07Signer();
+    let nip07signer: NDKNip07Signer | undefined = undefined;
+    console.log("About to initialize NDKNip07Signer...");
+    try {
+      nip07signer = new NDKNip07Signer();
+      ndk.signer = nip07signer;
+      setNip07Ready(true);
+      console.log("success");
+    } catch (error) {
+      setNip07Ready(false);
+      console.log("failure: " + error);
+    }
+
     const hexpubkey = localStorage.getItem("pubkey");
     if (hexpubkey) {
-      console.log("Found pubkey in local storage: " + hexpubkey);
+      console.log("Loading pubkey found in local storage: " + hexpubkey);
       const loadedUser = new NDKUser({ hexpubkey: hexpubkey });
-      console.log("User created: " + loadedUser.hexpubkey);
       setNDKUser(loadedUser);
     }
   }, []);
@@ -82,7 +92,15 @@ function NostrProvider({ children }: NostrProviderProps) {
       .catch((error) => console.log("delete error: " + JSON.stringify(error)));
   };
 
-  const value = { ndk, ndkUser, loadNDKUser, publish, logout, deleteEvent };
+  const value = {
+    ndk,
+    ndkUser,
+    loadNDKUser,
+    publish,
+    logout,
+    deleteEvent,
+    nip07Ready,
+  };
   return (
     <NostrContext.Provider value={value}>{children}</NostrContext.Provider>
   );
