@@ -39,6 +39,7 @@ export default function AwardBadge() {
     let key = "<pubkey>";
     if (ndkUser) key = ndkUser.hexpubkey;
     setPubkey(key);
+    setAwardedPubkey(key);
     setBadgeDefRef(`30009:${key}:${badgeID}`);
   }, [ndkUser]);
 
