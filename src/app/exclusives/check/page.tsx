@@ -18,9 +18,11 @@ export default function CheckEligibility() {
   const { ndk, ndkUser, publish } = useNostrContext();
   const [pubkey, setPubkey] = useState("");
   const [exclusive, setExclusive] = useState("nacdemoapp-myexclusive");
+  const [owner, setOwner] = useState("");
   const [events, setEvents] = useState<Set<NDKEvent> | undefined>(undefined);
   const [mesgs, setMesgs] = useState<{ id: string; mesg: string }[]>([]);
   const [runOn, setRunOn] = useState("client");
+  const [resullDisplay, setResultDisplay] = useState(-1);
 
   // non-state lists to avoid overriding due to multiple adds before render
   let myMesgs = [...mesgs];
@@ -39,17 +41,46 @@ export default function CheckEligibility() {
     setEvents(myEvents);
   };
 
+  const checkOnServer = async () => {
+    const jsonBody = JSON.stringify({
+      owner: owner,
+      exclusiveid: exclusive,
+      pubkey: pubkey,
+    });
+    addMesg("sending post request with body " + jsonBody);
+    const response = await fetch("http://localhost:3000/api/check", {
+      method: "POST",
+      body: jsonBody,
+      headers: { "content-type": "application/json" },
+    }).catch((e) => {
+      addMesg("Error calling check API: " + getErrorMessage(e));
+      return null;
+    });
+
+    if (response) {
+      const json = await response.json();
+      processEligibilityResult(json);
+    }
+  };
+
   const processEligibilityResult = (result: EligibilityResult) => {
+    if (result.isEligible) setResultDisplay(1);
+    else setResultDisplay(0);
     addMesg("---------- Result ----------");
     addMesg(`isEligible: ${result.isEligible}`);
     if (result.errors) {
       addMesg("Errors");
       result.errors.forEach((error) => addMesg(error));
     }
+
+    let firstError = true;
     if (result.badges) {
-      addMesg("badge errors:");
       result.badges.forEach((badge) => {
         if (badge.errors) {
+          if (firstError) {
+            addMesg("badge errors:");
+          }
+          firstError = false;
           addMesg(`${badge.errors.toString()}: ${badge.d}`);
         }
       });
@@ -69,21 +100,29 @@ export default function CheckEligibility() {
       case "exclusive":
         setExclusive(value);
         break;
+      case "owner":
+        setOwner(value);
     }
   };
 
   const checkClicked = async () => {
     myMesgs = [];
     myEvents = new Set<NDKEvent>();
+    setResultDisplay(-1);
     if (runOn == "client") addMesg("starting eligibility check on client");
     else {
       addMesg("starting eligibility check on server");
+      checkOnServer();
       return;
     }
 
     try {
       // get exclusive
-      let filter: NDKFilter = { kinds: [30402], "#d": [exclusive] };
+      let filter: NDKFilter = {
+        authors: [owner],
+        kinds: [30402],
+        "#d": [exclusive],
+      };
       const exclusiveEvent = await ndk?.fetchEvent(filter);
 
       if (!exclusiveEvent) {
@@ -95,12 +134,6 @@ export default function CheckEligibility() {
       addEvent(exclusiveEvent);
 
       const aTags = exclusiveEvent.getMatchingTags("a");
-      const fakeTake: NDKTag = [
-        "a",
-        "30009:12300003775402413595ac9e1612bed508815e98ec4aa9d68a2628ff6154856f:otherapp-badgex",
-      ];
-
-      aTags.push(fakeTake);
       const badgeIds: string[] = [];
       const badgePublishers: string[] = [];
       const aTagValues: string[] = [];
@@ -113,7 +146,6 @@ export default function CheckEligibility() {
       });
 
       addMesg("required badges: " + JSON.stringify(badgeIds));
-      // addMesg("badge publishers: " + JSON.stringify(badgePublishers));
 
       // get badge awards
       const awardFilter: NDKFilter = {
@@ -122,8 +154,6 @@ export default function CheckEligibility() {
         // "#a": aTagValues, // don't include as will expand result set
         "#p": [pubkey],
       };
-
-      // addMesg("filter: " + JSON.stringify(awardFilter));
 
       // get badge awards
       const awardEvents = await ndk?.fetchEvents(awardFilter);
@@ -167,6 +197,7 @@ export default function CheckEligibility() {
     let key = "<pubkey>";
     if (ndkUser) key = ndkUser.hexpubkey;
     {
+      setOwner(key);
       setPubkey(key);
     }
   }, [ndkUser]);
@@ -177,6 +208,14 @@ export default function CheckEligibility() {
       <div className="twoframe">
         <div style={{ width: "100%" }}>
           <form className="form">
+            <label htmlFor="owner">Exclusive Owner Pubkey</label>
+            <input
+              type="text"
+              id="owner"
+              name="owner"
+              defaultValue={owner}
+              onChange={onChangeHandler}
+            />
             <label htmlFor="exclusive">Exclusive ID</label>
             <input
               type="text"
@@ -203,6 +242,7 @@ export default function CheckEligibility() {
               >
                 Check Eligibility
               </button>
+
               <div>
                 <input
                   type="radio"
@@ -231,6 +271,8 @@ export default function CheckEligibility() {
             </div>
           </form>
           <div style={{ paddingLeft: "2rem" }}>
+            {resullDisplay == 1 && <div className="success">ELIGIBLE</div>}
+            {resullDisplay == 0 && <div className="fail">NOT ELIGIBLE</div>}
             <MesgList mylist={mesgs} />
           </div>
         </div>
